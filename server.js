@@ -1,6 +1,8 @@
 var http = require('http');
 
-http.createServer(function(req, res) {
+function requestListener(req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.end('Hello, world!');
-}).listen(8888);
+}
+
+http.createServer(requestListener).listen(8888);
