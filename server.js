@@ -1,8 +1,17 @@
 var http = require('http');
 
-function requestListener(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Hello, world!');
+const PORT = 8888;
+
+function start() {
+    function requestListener(req, res) {
+        console.log('Request received.');
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.end('Hello, world!');
+    }
+
+    http.createServer(requestListener).listen(PORT);
+
+    console.log('Server now listening on port %d.', PORT);
 }
 
-http.createServer(requestListener).listen(8888);
+exports.start = start;
