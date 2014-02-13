@@ -3,14 +3,14 @@ var url = require('url');
 
 const PORT = 8888;
 
-function start(route) {
+function start(route, handle) {
     function requestListener(req, res) {
         var pathname = url.parse(req.url).pathname;
         console.log('Request for', pathname, 'received.');
 
-        route(pathname);
+        route(handle, pathname);
 
-        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.writeHead(200, 'OK', {'Content-Type': 'text/plain'});
         res.end('Hello, world!');
     }
 
