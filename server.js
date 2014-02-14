@@ -4,14 +4,24 @@ var url = require('url');
 const PORT = 8888;
 
 function start(route, handle) {
-    function requestListener(req, res) {
+    function onRequest(req, res) {
+        var postData = '';
         var pathname = url.parse(req.url).pathname;
         console.log('Request for', pathname, 'received.');
 
-        route(handle, pathname, res);
+        req.setEncoding('utf8');
+
+        req.addListener('data', function(postDataChunk) {
+            postData += postDataChunk;
+            console.log('Received POST data chunk', postDataChunk + '.');
+        });
+
+        req.addListener('end', function() {
+            route(handle, pathname, res, postData);
+        });
     }
 
-    http.createServer(requestListener).listen(PORT);
+    http.createServer(onRequest).listen(PORT);
 
     console.log('Server now listening on port %d.', PORT);
 }
