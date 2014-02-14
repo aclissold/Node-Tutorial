@@ -1,4 +1,5 @@
 var exec = require('child_process').exec,
+    formidable = require('formidable'),
     fs = require('fs'),
     querystring = require('querystring');
 
@@ -16,10 +17,26 @@ function start(response) {
 
 }
 
-function upload(response, postData) {
+function upload(response, request) {
     console.log('Request handler "upload" was called.');
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    response.end('You\'ve sent: ' + querystring.parse(postData).text);
+
+    var form = new formidable.IncomingForm();
+    console.log('About to parse file upload form.');
+    form.parse(request, function(err, fields, files) {
+        console.log('Done parsing.');
+
+        fs.rename(files.upload.path, '/tmp/test.png', function(err) {
+            if (err) {
+                // Delete the existing file and try again if it failed
+                fs.unlink('/tmp/test.png');
+                fs.rename(files.upload.path, '/tmp/test.png');
+            }
+        });
+    });
+    response.writeHead(200, {'Content-Type': 'text/html'});
+    response.write('received image:<br/>');
+    response.write('<img src="/show" />');
+    response.end();
 }
 
 function show(response, postData) {
